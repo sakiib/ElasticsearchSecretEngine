@@ -35,7 +35,19 @@
 - `kubectl get secret -n demo es-quickstart-elastic-cred -o jsonpath='{.data.username}' | base64 -d` - `Username`: `elastic`
 - `kubectl get secret -n demo es-quickstart-elastic-cred -o jsonpath='{.data.password}' | base64 -d` - `Password`: `q6XreFWkWi$;BsQy`
 - `$ curl -XGET -k -u '<username>:<password>' "https://localhost:9200/_cluster/health?pretty"` - Health Check
+
 - 
+```
+vault write database/config/my-elasticsearch-database \
+    plugin_name="elasticsearch-database-plugin" \
+    allowed_roles="internally-defined-role,externally-defined-role" \
+    username=vault \
+    password=myPa55word \
+    url=http://localhost:9200 \
+    ca_cert=/usr/share/ca-certificates/extra/elastic-stack-ca.crt.pem \
+    client_cert=$ES_HOME/config/certs/elastic-certificates.crt.pem \
+    client_key=$ES_HOME/config/certs/elastic-certificates.key.pem
+```
 
 ### resources:
 - [Elasticsearch Database Secrets Engine](https://www.vaultproject.io/docs/secrets/databases/elasticdb)
