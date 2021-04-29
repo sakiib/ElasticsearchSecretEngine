@@ -36,17 +36,58 @@
 - `kubectl get secret -n demo es-quickstart-elastic-cred -o jsonpath='{.data.password}' | base64 -d` - `Password`: `q6XreFWkWi$;BsQy`
 - `$ curl -XGET -k -u '<username>:<password>' "https://localhost:9200/_cluster/health?pretty"` - Health Check
 
-- 
+- `kubectl apply -f secret-engine.yaml`
+
+- `vault policy list`
 ```
-vault write database/config/my-elasticsearch-database \
-    plugin_name="elasticsearch-database-plugin" \
-    allowed_roles="internally-defined-role,externally-defined-role" \
-    username=vault \
-    password=myPa55word \
-    url=http://localhost:9200 \
-    ca_cert=/usr/share/ca-certificates/extra/elastic-stack-ca.crt.pem \
-    client_cert=$ES_HOME/config/certs/elastic-certificates.crt.pem \
-    client_key=$ES_HOME/config/certs/elastic-certificates.key.pem
+default
+k8s.-.demo.es-quickstart
+k8s.-.demo.vault-auth-method-controller
+vault-policy-controller
+root
+```
+- `vault policy read k8s.-.demo.es-quickstart`
+```
+path "database/config/*" {
+        capabilities = ["create", "update", "read", "delete"]
+}
+
+path "database/roles/*" {
+        capabilities = ["create", "update", "read", "delete"]
+}
+
+path "database/creds/*" {
+        capabilities = ["create", "update", "read"]
+}
+
+path "/sys/leases/*" {
+  capabilities = ["create","update"]
+}
+```
+
+- `vault auth list`
+```
+approle-path/    approle       auth_approle_3f575544       n/a
+kubernetes/      kubernetes    auth_kubernetes_ee061cd8    n/a
+token/           token         auth_token_47fce597         token based credentials
+```
+
+- `vault list auth/kubernetes/role`
+```
+Key                                 Value
+---                                 -----
+bound_service_account_names         [vault]
+bound_service_account_namespaces    [demo]
+token_bound_cidrs                   []
+token_explicit_max_ttl              0s
+token_max_ttl                       24h
+token_no_default_policy             false
+token_num_uses                      0
+token_period                        24h
+token_policies                      [default vault-policy-controller k8s.-.demo.es-quickstart]
+token_ttl                           24h
+token_type                          default
+
 ```
 
 ### resources:
