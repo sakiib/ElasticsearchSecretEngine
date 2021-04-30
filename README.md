@@ -90,6 +90,39 @@ token_type                          default
 
 ```
 
+- `vault secrets list` - we have our custom-database-path enabled
+```
+Path                     Type         Accessor              Description
+----                     ----         --------              -----------
+cubbyhole/               cubbyhole    cubbyhole_3f1ae146    per-token private secret storage
+custom-database-path/    database     database_ee52628a     n/a
+identity/                identity     identity_a5757022     identity store
+sys/                     system       system_542c9d68       system endpoints used for control, policy and debugging
+```
+
+- `vault list custom-database-path/roles` - see the roles created after applying ElasticsearchRole CRD yaml
+
+```
+Keys
+----
+k8s.-.demo.es-quickstart
+
+``` 
+
+- ` vault read custom-database-path/roles/k8s.-.demo.es-quickstart`
+```
+Key                      Value
+---                      -----
+creation_statements      [{ "db": "admin", "roles": [{ "role": "readWrite" }, {"role": "read", "db": "foo"}] }]
+db_name                  k8s.-.demo.es-quickstart
+default_ttl              1h
+max_ttl                  24h
+renew_statements         []
+revocation_statements    []
+rollback_statements      []
+
+```
+
 ### resources:
 - [Elasticsearch Database Secrets Engine](https://www.vaultproject.io/docs/secrets/databases/elasticdb)
 - [Elasticsearch Quickstart using KubeDB](https://kubedb.com/docs/v2021.04.16/guides/elasticsearch/quickstart/overview/) 
