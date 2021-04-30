@@ -123,6 +123,50 @@ rollback_statements      []
 
 ```
 
+- upto role creation
+```
+NAME                  READY   STATUS    RESTARTS   AGE
+pod/es-quickstart-0   1/1     Running   1          29h
+pod/es-quickstart-1   1/1     Running   1          29h
+pod/es-quickstart-2   1/1     Running   1          29h
+pod/vault-0           3/3     Running   3          29h
+
+NAME                           TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                         AGE
+service/es-quickstart          ClusterIP   10.99.60.105     <none>        9200/TCP                        29h
+service/es-quickstart-master   ClusterIP   None             <none>        9300/TCP                        29h
+service/es-quickstart-pods     ClusterIP   None             <none>        9200/TCP                        29h
+service/vault                  NodePort    10.104.214.202   <none>        8200:31809/TCP,8201:32153/TCP   29h
+service/vault-internal         ClusterIP   None             <none>        8200/TCP,8201/TCP               29h
+service/vault-stats            ClusterIP   10.104.105.19    <none>        56790/TCP                       29h
+
+NAME                             READY   AGE
+statefulset.apps/es-quickstart   3/3     29h
+statefulset.apps/vault           1/1     29h
+
+NAME                                               TYPE                       VERSION   AGE
+appbinding.appcatalog.appscode.com/es-quickstart   kubedb.com/elasticsearch   7.9.1     29h
+appbinding.appcatalog.appscode.com/vault                                                29h
+
+NAME                                              STATUS    AGE
+secretengine.engine.kubevault.com/es-quickstart   Success   3h13m
+
+NAME                                                   STATUS    AGE
+elasticsearchrole.engine.kubevault.com/es-quickstart   Success   84m
+
+NAME                              REPLICAS   VERSION   STATUS    AGE
+vaultserver.kubevault.com/vault   1          1.7.0     Running   29h
+
+NAME                                                                   STATUS    AGE
+vaultpolicybinding.policy.kubevault.com/vault-auth-method-controller   Success   29h
+
+NAME                                                            STATUS    AGE
+vaultpolicy.policy.kubevault.com/vault-auth-method-controller   Success   29h
+
+NAME                                     VERSION          STATUS   AGE
+elasticsearch.kubedb.com/es-quickstart   xpack-7.9.1-v1   Ready    29h
+
+```
+
 ### resources:
 - [Elasticsearch Database Secrets Engine](https://www.vaultproject.io/docs/secrets/databases/elasticdb)
 - [Elasticsearch Quickstart using KubeDB](https://kubedb.com/docs/v2021.04.16/guides/elasticsearch/quickstart/overview/) 
