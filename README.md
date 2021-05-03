@@ -167,6 +167,94 @@ elasticsearch.kubedb.com/es-quickstart   xpack-7.9.1-v1   Ready    29h
 
 ```
 
+
+- `kubectl apply -f db-access-request.yaml`
+- `kubectl vault approve databaseaccessrequest es-cred-rqst -n demo` or `kubectl vault deny databaseaccessrequest es-cred-rqst -n demo`
+- `kubectl get databaseaccessrequest es-cred-rqst -n demo -o json | jq '.status'`
+```
+{
+  "conditions": [
+    {
+      "lastTransitionTime": "2021-05-03T08:32:03Z",
+      "message": "This was approved by: kubectl vault approve databaseaccessrequest",
+      "reason": "KubectlApprove",
+      "status": "True",
+      "type": "Approved"
+    },
+    {
+      "lastTransitionTime": "2021-05-03T08:32:13Z",
+      "message": "The requested credentials successfully issued.",
+      "reason": "SuccessfullyIssuedCredential",
+      "status": "True",
+      "type": "Available"
+    }
+  ],
+  "lease": {
+    "duration": "1h0m0s",
+    "id": "custom-database-path/creds/k8s.-.demo.es-quickstart/pEibguv1LrM3vGacEiSEgFEQ",
+    "renewable": true
+  },
+  "observedGeneration": 1,
+  "phase": "Approved",
+  "secret": {
+    "name": "es-cred-rqst-gakbo3"
+  }
+}
+```
+- `kubectl get secret -n demo es-cred-rqst-gakbo3 -o yaml`
+```
+apiVersion: v1
+data:
+  password: a3pJOXJiNWkyd013LXRBZ1Iwcmw=
+  username: di1rdWJlcm5ldGVzLWRlbW8tazhzLi0uZGVtby5lcy1xLXNYWGpsVUlQV05YWjRnSjI3NXlHLTE2MjAwMzA3MjM=
+kind: Secret
+metadata:
+  .
+  .
+  .
+```
+
+- upto db-access-request
+```
+NAME                  READY   STATUS    RESTARTS   AGE
+pod/es-quickstart-0   1/1     Running   2          4d4h
+pod/es-quickstart-1   1/1     Running   2          4d4h
+pod/es-quickstart-2   1/1     Running   2          4d4h
+pod/vault-0           3/3     Running   0          4h25m
+
+NAME                           TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)                         AGE
+service/es-quickstart          ClusterIP   10.99.60.105   <none>        9200/TCP                        4d4h
+service/es-quickstart-master   ClusterIP   None           <none>        9300/TCP                        4d4h
+service/es-quickstart-pods     ClusterIP   None           <none>        9200/TCP                        4d4h
+service/vault                  NodePort    10.96.28.120   <none>        8200:32442/TCP,8201:31475/TCP   4h25m
+service/vault-internal         ClusterIP   None           <none>        8200/TCP,8201/TCP               4h25m
+service/vault-stats            ClusterIP   10.108.25.52   <none>        56790/TCP                       4h25m
+
+NAME                             READY   AGE
+statefulset.apps/es-quickstart   3/3     4d4h
+statefulset.apps/vault           1/1     4h25m
+
+NAME                                               TYPE                       VERSION   AGE
+appbinding.appcatalog.appscode.com/es-quickstart   kubedb.com/elasticsearch   7.9.1     4d4h
+appbinding.appcatalog.appscode.com/vault                                                4h25m
+
+NAME                                                   STATUS    AGE
+elasticsearchrole.engine.kubevault.com/es-quickstart   Success   4h20m
+
+NAME                                                      STATUS     AGE
+databaseaccessrequest.engine.kubevault.com/es-cred-rqst   Approved   10m
+
+NAME                                              STATUS    AGE
+secretengine.engine.kubevault.com/es-quickstart   Success   4h21m
+
+NAME                              REPLICAS   VERSION   STATUS    AGE
+vaultserver.kubevault.com/vault   1          1.7.0     Running   4h25m
+
+NAME                                     VERSION          STATUS   AGE
+elasticsearch.kubedb.com/es-quickstart   xpack-7.9.1-v1   Ready    4d4h
+```
+
+
 ### resources:
 - [Elasticsearch Database Secrets Engine](https://www.vaultproject.io/docs/secrets/databases/elasticdb)
 - [Elasticsearch Quickstart using KubeDB](https://kubedb.com/docs/v2021.04.16/guides/elasticsearch/quickstart/overview/) 
