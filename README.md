@@ -113,7 +113,7 @@ k8s.-.demo.es-quickstart
 ```
 Key                      Value
 ---                      -----
-creation_statements      [{ "db": "admin", "roles": [{ "role": "readWrite" }, {"role": "read", "db": "foo"}] }]
+creation_statements      [{"elasticsearch_roles": ["superuser"]}]
 db_name                  k8s.-.demo.es-quickstart
 default_ttl              1h
 max_ttl                  24h
